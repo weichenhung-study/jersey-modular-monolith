@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<xml status="INFO" monitorinterval="60"><!-- INFO -->
+    <properties>
+        <property name="LOG_HOME">D:/LOG_MyCredit</property><!-- D:/LOG_MyCredit -->
+        <property name="FILE_NAME">MyCredit_log</property>
+        <property name="LOG_ALL">ALL</property>
+        <property name="LOG_ERROR">ERROR</property>
+        <property name="LOG_WARN">WARN</property>
+        <property name="LOG_INFO">INFO</property>
+        <property name="LOG_DEBUG">DEBUG</property>
+        <property name="LOG_TRACE">TRACE</property>
+
+        <property name="RolloverFileName">${FILE_NAME}-%d{yyyy-MM-dd_HH}-%i.txt</property>
+
+        <property name="FileName.RF">${LOG_HOME}/${FILE_NAME}.txt</property>
+        <property name="FilePattern.RF">${LOG_HOME}/$${date:yyyyMMdd}/${RolloverFileName}</property>
+
+        <property name="FileName.F">temp</property>
+
+        <property name="FileName.RRAF.ALL">${LOG_HOME}/${FILE_NAME}_${LOG_ALL}.txt</property>
+        <property name="FilePattern.RRAF.ALL">${LOG_HOME}/$${date:yyyyMMdd}/${LOG_ALL}/${RolloverFileName}</property>
+
+        <property name="FileName.RRAF.ERROR">${LOG_HOME}/${FILE_NAME}_${LOG_ERROR}.txt</property>
+        <property name="FilePattern.RRAF.ERROR">${LOG_HOME}/$${date:yyyyMMdd}/${LOG_ERROR}/${RolloverFileName}</property>
+
+        <property name="FileName.RRAF.WARN">${LOG_HOME}/${FILE_NAME}_${LOG_WARN}.txt</property>
+        <property name="FilePattern.RRAF.WARN">${LOG_HOME}/$${date:yyyyMMdd}/${LOG_WARN}/${RolloverFileName}</property>
+
+        <property name="FileName.RRAF.INFO">${LOG_HOME}/${FILE_NAME}_${LOG_INFO}.txt</property>
+        <property name="FilePattern.RRAF.INFO">${LOG_HOME}/$${date:yyyyMMdd}/${LOG_INFO}/${RolloverFileName}</property>
+
+        <property name="FileName.RRAF.DEBUG">${LOG_HOME}/${FILE_NAME}_${LOG_DEBUG}.txt</property>
+        <property name="FilePattern.RRAF.DEBUG">${LOG_HOME}/$${date:yyyyMMdd}/${LOG_DEBUG}/${RolloverFileName}</property>
+
+        <property name="FileName.RRAF.TRACE">${LOG_HOME}/${FILE_NAME}_${LOG_TRACE}.txt</property>
+        <property name="FilePattern.RRAF.TRACE">${LOG_HOME}/$${date:yyyyMMdd}/${LOG_TRACE}/${RolloverFileName}</property>
+
+        <property name="LOG_PATTERN">[%d{yyyy/MM/dd HH:mm:ss.SSS}][%X{ip}][%X{sid}][%T][%t][%c][%-5level]%msg%n</property>
+        <!-- %r [%t] %p %c %notEmpty{%ndc }- %m%n -->
+
+        <property name="LOG_CHARSET">UTF-8</property>
+        <property name="LOG_TimeBase">1</property>
+        <property name="LOG_SizeBase">10MB</property><!-- Default:10MB -->
+        <property name="LOG_RolloverMax">360</property><!-- Default:360 -->
+    </properties>
+    <Appenders>
+        <!-- 輸出到控制台 -->
+        <Console name="Appender.Console" target="SYSTEM_OUT">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+        </Console>
+
+        <RollingFile name="Appender.RF" fileName="${FileName.RF}" filePattern="${FilePattern.RF}">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="${LOG_TimeBase}" />
+                <SizeBasedTriggeringPolicy size="${LOG_SizeBase}" />
+            </Policies>
+            <DefaultRolloverStrategy max="${LOG_RolloverMax}" />
+        </RollingFile>
+        <!-- 
+                <File name="Appender.File" fileName="${FileName.F}">
+                    <PatternLayout pattern="${LOG_PATTERN}" />
+                </File>
+        -->
+
+        <!-- ALL -->
+        <RollingRandomAccessFile name="Appender.RRAF.ALL" fileName="${FileName.RRAF.ALL}" filePattern="${FilePattern.RRAF.ALL}" immediateFlush="false">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="${LOG_TimeBase}" />
+                <SizeBasedTriggeringPolicy size="${LOG_SizeBase}" />
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="${LOG_RolloverMax}" />
+        </RollingRandomAccessFile>
+
+        <!-- ERROR -->
+        <RollingRandomAccessFile name="Appender.RRAF.ERROR" fileName="${FileName.RRAF.ERROR}" filePattern="${FilePattern.RRAF.ERROR}" immediateFlush="false">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+            <LevelMatchFilter level="${LOG_ERROR}" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="${LOG_TimeBase}" />
+                <SizeBasedTriggeringPolicy size="${LOG_SizeBase}" />
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="${LOG_RolloverMax}" />
+        </RollingRandomAccessFile>
+
+        <!-- WARN -->
+        <RollingRandomAccessFile name="Appender.RRAF.WARN" fileName="${FileName.RRAF.WARN}" filePattern="${FilePattern.RRAF.WARN}" immediateFlush="false">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+            <LevelMatchFilter level="${LOG_WARN}" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="${LOG_TimeBase}" />
+                <SizeBasedTriggeringPolicy size="${LOG_SizeBase}" />
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="${LOG_RolloverMax}" />
+        </RollingRandomAccessFile>
+
+        <!-- DEBUG -->
+        <RollingRandomAccessFile name="Appender.RRAF.DEBUG" fileName="${FileName.RRAF.DEBUG}" filePattern="${FilePattern.RRAF.DEBUG}" immediateFlush="false">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+            <LevelMatchFilter level="${LOG_DEBUG}" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="${LOG_TimeBase}" />
+                <SizeBasedTriggeringPolicy size="${LOG_SizeBase}" />
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="${LOG_RolloverMax}" />
+        </RollingRandomAccessFile>
+
+        <!-- TRACE -->
+        <RollingRandomAccessFile name="Appender.RRAF.TRACE" fileName="${FileName.RRAF.TRACE}" filePattern="${FilePattern.RRAF.TRACE}" immediateFlush="false">
+            <PatternLayout charset="${LOG_CHARSET}" pattern="${LOG_PATTERN}" />
+            <LevelMatchFilter level="${LOG_TRACE}" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="${LOG_TimeBase}" />
+                <SizeBasedTriggeringPolicy size="${LOG_SizeBase}" />
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="${LOG_RolloverMax}" />
+        </RollingRandomAccessFile>
+
+        <Async name="Appender.ASYNC" bufferSize="262144">
+            <AppenderRef ref="Appender.Console" />
+            <!-- <AppenderRef ref="Appender.File" /> -->
+            <!-- <AppenderRef ref="Appender.RF" /> -->
+            <AppenderRef ref="Appender.RRAF.ALL" />
+            <AppenderRef ref="Appender.RRAF.ERROR" />
+            <AppenderRef ref="Appender.RRAF.WARN" />
+            <!-- <AppenderRef ref="Appender.RRAF.INFO" /> -->
+            <AppenderRef ref="Appender.RRAF.DEBUG" />
+            <AppenderRef ref="Appender.RRAF.TRACE" />
+            <!-- <LinkedTransferQueue/> -->
+        </Async>
+
+    </Appenders>
+    <Loggers>
+        <Root level="TRACE"><!-- TRACE -->
+            <AppenderRef ref="Appender.ASYNC" />
+        </Root>
+    </Loggers>
+</xml>
