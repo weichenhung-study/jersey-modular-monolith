@@ -81,6 +81,7 @@ public class BillrecordDAO extends ConnControl {
             log.info(Common.RESULT + result);
         } finally {
             closePS(pstmt);
+            closeConn(conn);
             log.info(Common.ARROW + "insertCusDateBill" + Common.END_B);
         }
         return result;
@@ -135,6 +136,7 @@ public class BillrecordDAO extends ConnControl {
         } finally {
             closePS(pstmt);
             closeRS(rs);
+            closeConn(conn);
             log.info(Common.ARROW + "selectCusBill" + Common.END_B);
         }
         return out;
@@ -191,6 +193,7 @@ public class BillrecordDAO extends ConnControl {
         } finally {
             closePS(pstmt);
             closeRS(rs);
+            closeConn(conn);
             log.info(Common.ARROW + "selectCusBill" + Common.END_B);
         }
         return out;
@@ -218,6 +221,7 @@ public class BillrecordDAO extends ConnControl {
             log.info(Common.RESULT + out);
         } finally {
             closePS(pstmt);
+            closeConn(conn);
             log.info(Common.ARROW + "updateDisputedFlag" + Common.END_B);
         }
         return out;

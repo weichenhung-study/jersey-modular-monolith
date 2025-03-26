@@ -40,6 +40,16 @@ public class ConnControl {
         return conn;
     }
 
+    public void closeConn(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                log.error("Error closing connection: ", e);
+            }
+        }
+    }
+
     public void closePS(PreparedStatement ps) throws Exception {
         if(ps != null) ps.close();
     }
