@@ -7,6 +7,7 @@ import com.ntou.db.cuscredit.CuscreditVO;
 import com.ntou.sysintegrat.mailserver.JavaMail;
 import com.ntou.sysintegrat.mailserver.MailVO;
 import com.ntou.tool.Common;
+import com.ntou.tool.ExecutionTimer;
 import com.ntou.tool.ResTool;
 import com.ntou.tool.DateTool;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +25,8 @@ public class FeePayment {
         this.cuscreditSvc = cuscreditSvc;
     }
     public Response doAPI(FeePaymentReq req) throws Exception {
+		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.APPLICATION.getValue());
+
         log.info(Common.API_DIVIDER + Common.START_B + Common.API_DIVIDER);
         log.info(Common.REQ + req);
         FeePaymentRes res = new FeePaymentRes();
@@ -31,6 +34,7 @@ public class FeePayment {
         if(!req.checkReq())
             ResTool.regularThrow(res, FeePaymentRC.T171A.getCode(), FeePaymentRC.T171A.getContent(), req.getErrMsg());
 
+		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
         BillofmonthVO vo = setUpdatePayDate(req);
         ArrayList<BillofmonthVO> listBillofmonth = billofmonthSvc.findBills(vo);
         if (listBillofmonth.size() == 1) {
@@ -43,12 +47,16 @@ public class FeePayment {
             sendMail(req, listBillofmonth.get(0));
         } else
             ResTool.commonThrow(res, FeePaymentRC.T171D.getCode(), FeePaymentRC.T171D.getContent());
+		ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
 
         ResTool.setRes(res, FeePaymentRC.T1710.getCode(), FeePaymentRC.T1710.getContent());
 
         log.info(Common.RES + res);
         log.info(Common.API_DIVIDER + Common.END_B + Common.API_DIVIDER);
-        return Response.status(Response.Status.CREATED).entity(res).build();
+        
+		ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.APPLICATION.getValue());
+        ExecutionTimer.exportTimings(this.getClass().getSimpleName() + "_" + DateTool.getYYYYmmDDhhMMss() + ".txt");
+		return Response.status(Response.Status.CREATED).entity(res).build();
     }
     private void sendMail(FeePaymentReq req, BillofmonthVO key) throws Exception {
         MailVO vo = new MailVO();

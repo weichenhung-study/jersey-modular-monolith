@@ -5,6 +5,7 @@ import com.ntou.db.cuscredit.CuscreditVO;
 import com.ntou.sysintegrat.mailserver.JavaMail;
 import com.ntou.sysintegrat.mailserver.MailVO;
 import com.ntou.tool.Common;
+import com.ntou.tool.ExecutionTimer;
 import com.ntou.tool.ResTool;
 import com.ntou.tool.DateTool;
 import lombok.extern.log4j.Log4j2;
@@ -19,13 +20,16 @@ public class Application {
         this.cuscreditSvc = cuscreditSvc;
     }
     public Response doAPI(ApplicationReq req) throws Exception {
+		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.APPLICATION.getValue());
+
         log.info(Common.API_DIVIDER + Common.START_B + Common.API_DIVIDER);
         log.info(Common.REQ + req);
         ApplicationRes res = new ApplicationRes();
 
         if(!req.checkReq())
             ResTool.regularThrow(res, ApplicationRC.T111A.getCode(), ApplicationRC.T111A.getContent(), req.getErrMsg());
-
+        
+		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
         CuscreditVO cusDateBill = cuscreditSvc.selectKey(
                 req.getCid(), req.getCardType());
 
@@ -35,13 +39,17 @@ public class Application {
         int bInsertCusDateBill = cuscreditSvc.insert(voCuscreditInsert(req));
         if(bInsertCusDateBill !=1)
             ResTool.commonThrow(res, ApplicationRC.T111C.getCode(), ApplicationRC.T111C.getContent());
+        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
 
         sendMail(req);
         ResTool.setRes(res, ApplicationRC.T1110.getCode(), ApplicationRC.T1110.getContent());
 
         log.info(Common.RES + res);
         log.info(Common.API_DIVIDER + Common.END_B + Common.API_DIVIDER);
-        return Response.status(Response.Status.CREATED).entity(res).build();
+        
+		ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.APPLICATION.getValue());
+        ExecutionTimer.exportTimings(this.getClass().getSimpleName() + "_" + DateTool.getYYYYmmDDhhMMss() + ".txt");
+		return Response.status(Response.Status.CREATED).entity(res).build();
     }
 
     private CuscreditVO voCuscreditInsert(ApplicationReq req){

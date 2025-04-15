@@ -7,6 +7,10 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 
 public class DateTool {
+    public static String getYYYYmmDDhhMMss(){
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        return sdFormat.format(new Date());
+    }
     public static String getDateTime(){
         SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
         return sdFormat.format(new Date());
