@@ -28,10 +28,10 @@ public class TransactionQuery {
         if(!req.checkReq())
             ResTool.regularThrow(res, TransactionQueryRC.T161A.getCode(), TransactionQueryRC.T161A.getContent(), req.getErrMsg());
 
-        ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+        ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
         ArrayList<BillrecordVO> billList = billrecordSvc
                 .selectCusBillAll(voBillrecordSelect(req), req.getStartDate(), req.getEndDate());
-        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
 
         ResTool.setRes(res, TransactionQueryRC.T1610.getCode(), TransactionQueryRC.T1610.getContent());
         res.setResult(billList);

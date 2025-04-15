@@ -30,7 +30,7 @@ public class Activation {
         if(!req.checkReq())
             ResTool.regularThrow(res, ActivationRC.T131A.getCode(), ActivationRC.T131A.getContent(), req.getErrMsg());
 
-        ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+        ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
         CuscreditVO voCuscredit = cuscreditSvc.selectKey(
                 req.getCid(), req.getCardType());
 
@@ -44,7 +44,7 @@ public class Activation {
             vo.setContent("<h1>請聯繫客服</h1><h2>02-1234567</h2>");
             throw new TException(res);
         }
-		ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+		ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
 
         vo.setEmailAddr(voCuscredit.getEmail());
         vo.setSubject("信用卡開卡完成");

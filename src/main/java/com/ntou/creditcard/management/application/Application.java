@@ -29,7 +29,7 @@ public class Application {
         if(!req.checkReq())
             ResTool.regularThrow(res, ApplicationRC.T111A.getCode(), ApplicationRC.T111A.getContent(), req.getErrMsg());
         
-		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
         CuscreditVO cusDateBill = cuscreditSvc.selectKey(
                 req.getCid(), req.getCardType());
 
@@ -39,7 +39,7 @@ public class Application {
         int bInsertCusDateBill = cuscreditSvc.insert(voCuscreditInsert(req));
         if(bInsertCusDateBill !=1)
             ResTool.commonThrow(res, ApplicationRC.T111C.getCode(), ApplicationRC.T111C.getContent());
-        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
 
         sendMail(req);
         ResTool.setRes(res, ApplicationRC.T1110.getCode(), ApplicationRC.T1110.getContent());

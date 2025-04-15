@@ -34,7 +34,7 @@ public class Transaction {
         if(!req.checkReq())
             ResTool.regularThrow(res, TransactionRC.T141A.getCode(), TransactionRC.T141A.getContent(), req.getErrMsg());
 		
-		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+		ExecutionTimer.startStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
         CuscreditVO voCuscredit = cuscreditSvc.selectCardHolderActivated(
                 req.getCid(), req.getCardType(), req.getCardNum(), req.getSecurityCode());
 
@@ -45,7 +45,7 @@ public class Transaction {
         int insertResult = billrecordSvc.insertCusDateBill(voBillrecordInsert(req));
         if(insertResult !=1)
             ResTool.commonThrow(res, TransactionRC.T141C.getCode(), TransactionRC.T141C.getContent());
-        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATABASE.getValue());
+        ExecutionTimer.endStage(ExecutionTimer.ExecutionModule.DATA_INTERFACE.getValue());
 
 
         MailVO vo = new MailVO();
