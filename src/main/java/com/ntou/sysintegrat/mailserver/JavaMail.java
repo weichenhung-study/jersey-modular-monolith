@@ -7,9 +7,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
@@ -17,6 +15,15 @@ import javax.mail.internet.MimeMessage.RecipientType;
 @Log4j2
 public class JavaMail {
     private static final ExecutorService executor = Executors.newFixedThreadPool(5);
+    private static final String userName = "weiiweiidev@gmail.com"; // 寄件者信箱
+    private static final String password = "gevaewtbwiwhedea"; // 寄件者密碼
+    private static final Properties prop = getProperties();
+    private static final Session session = Session.getInstance(prop, new Authenticator() {
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(userName, password);
+        }
+    });
 
     static {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -27,16 +34,8 @@ public class JavaMail {
 
     public void sendMail(MailVO vo) {
         executor.submit(() -> {
+            Transport transport = null;
             try {
-
-                final String userName = "weiiweiidev@gmail.com";//"tuluber@gmail.com"; // 寄件者信箱
-                final String password = "gevaewtbwiwhedea";// 寄件者密碼 https://www.shin-her.com.tw/R/07583ed
-                Transport transport = null;
-                Properties prop = getProperties();
-
-                Auth auth = new Auth(userName, password);
-                Session session = Session.getDefaultInstance(prop, auth);
-
                 MimeMessage message = new MimeMessage(session);
 
                 try {
@@ -52,18 +51,20 @@ public class JavaMail {
                     // 內容/格式
                     message.setContent(vo.getContent(), "text/html;charset = UTF-8");
 
-
                     // ---------------------------------------------------------Transport傳送Message
                     transport = session.getTransport();
+                    transport.connect(userName, password); // 顯式連接
 
                     // transport將message送出
-                    Transport.send(message);
+                    transport.sendMessage(message, message.getAllRecipients());
 
                 } catch (MessagingException e) {
                     log.error(Common.EXCEPTION, e);
                 } finally {
                     try {
-                        if(transport!=null) transport.close();
+                        if (transport != null && transport.isConnected()) {
+                            transport.close();
+                        }
                     } catch (Exception e) {
                         log.error(Common.EXCEPTION, e);
                     }
@@ -95,7 +96,7 @@ public class JavaMail {
         // 安全資料傳輸層 (SSL) 通訊埠：465
         prop.put("mail.smtp.socketFactory.port", "465");
 
-        // 顯示連線資訊
+        // 顯示連線資訊 (debug 模式，可以先開啟方便排查問題)
         prop.put("mail.debug", "true");
         return prop;
     }
